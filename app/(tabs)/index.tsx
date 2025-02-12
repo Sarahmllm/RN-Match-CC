@@ -1,47 +1,57 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, ImageBackground } from 'react-native';
 import { StyleSheet } from 'react-native';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
+import { Asset } from 'expo-asset';
 
 export default function LoginScreen() {
+  const bgImage = Asset.fromModule(require('../../assets/images/LoginBackground.png')).uri;
+
   return (
-    <View style={styles.loginContainer}>
-      <Text style={styles.loginTitle}>Se connecter</Text>
-      
-      <View style={styles.loginButtonContainer}>
-        {/* Bouton de connexion avec Google */}
-        <TouchableOpacity style={styles.loginButton}>
-          <AntDesign name="google" size={20} color="black" />
-          <Text style={[styles.loginButtonText, { marginLeft: 10 }]}> Se connecter avec Google</Text>
-        </TouchableOpacity>
-        
-        {/* Bouton de connexion avec Apple */}
-        <TouchableOpacity style={styles.loginAppleButton}>
-          <AntDesign name="apple1" size={20} color="white" />
-          <Text style={[styles.loginAppleButtonText, { marginLeft: 10 }]}> Se connecter avec Apple</Text>
-        </TouchableOpacity>
-        
-        {/* Bouton de connexion par Email */}
-        <TouchableOpacity style={styles.loginButton}>
-          <FontAwesome name="envelope" size={20} color="black" />
-          <Text style={[styles.loginButtonText, { marginLeft: 10 }]}> Se connecter par Email</Text>
-        </TouchableOpacity>
+    <ImageBackground source={{ uri: bgImage }} style={styles.background}>
+      <View style={styles.overlay}>
+        <Text style={styles.loginTitle}>Se connecter</Text>
+
+        <View style={styles.loginButtonContainer}>
+          <TouchableOpacity style={styles.loginButton}>
+            <AntDesign name="google" size={20} color="white" />
+            <Text style={[styles.loginButtonText, { marginLeft: 10 }]}> Se connecter avec Google</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.loginAppleButton}>
+            <AntDesign name="apple1" size={20} color="white" />
+            <Text style={[styles.loginAppleButtonText, { marginLeft: 10 }]}> Se connecter avec Apple</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.loginButton}>
+            <FontAwesome name="envelope" size={20} color="white" />
+            <Text style={[styles.loginButtonText, { marginLeft: 10 }]}> Se connecter par Email</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  loginContainer: {
+  background: {
     flex: 1,
+    resizeMode: 'cover',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
   },
   loginTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 40,
+    color: "#fff"
   },
   loginButtonContainer: {
     width: '100%',
@@ -57,7 +67,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginVertical: 10,
     borderWidth: 1,
-    borderColor: '#000',
+    borderColor: '#fff',
     width: '80%',
     justifyContent: 'center',
   },
@@ -74,7 +84,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   loginButtonText: {
-    color: '#000',
+    color: '#fff',
     fontWeight: 'bold',
   },
   loginAppleButtonText: {

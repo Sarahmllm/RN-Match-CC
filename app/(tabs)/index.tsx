@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ImageBackground } from 'react-native';
 import { StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { Asset } from 'expo-asset';
 import * as Google from 'expo-auth-session/providers/google';
 import { getAuth, signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
-import { auth } from '../../src/firebaseConfig';
-import { GOOGLE_CLIENT_ID } from 'react-native-dotenv';
+import { auth } from '../../src/firebaseConfig.js';
 
 
 export default function LoginScreen() {
   const bgImage = Asset.fromModule(require('../../assets/images/LoginBackground.png')).uri;
 
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    clientId: GOOGLE_CLIENT_ID,
+    clientId: "",
   });
   
 
@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
     width: '80%',
     justifyContent: 'center',
   },
+
   loginAppleButton: {
     flexDirection: 'row',
     alignItems: 'center',

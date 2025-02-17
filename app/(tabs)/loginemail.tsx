@@ -29,7 +29,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
       }
 
       await signInWithEmailAndPassword(auth, email, password);
-      navigation.navigate('Match');
+      navigation.navigate('CreateProfil');
     } catch (error: any) {
       if (error.code === 'auth/invalid-credential') {
         setError("Identifiants invalides. Vérifiez votre email et mot de passe.");

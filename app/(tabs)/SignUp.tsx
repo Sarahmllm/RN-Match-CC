@@ -1,17 +1,52 @@
+import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ImageBackground } from 'react-native';
 import { StyleSheet } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { Asset } from 'expo-asset';
+import { auth } from '../../src/firebaseConfig';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 
 export default function SignupScreen({ navigation }: { navigation: any }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [name, setName] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const bgImage = Asset.fromModule(require('../../assets/images/LoginBackground.png')).uri;
 
   const goToMatch = () => {
-    navigation.navigate('Match');  
+    navigation.navigate('Match');
   };
 
   const goToLogin = () => {
-    navigation.navigate('Login');  
+    navigation.navigate('Login');
+  };
+
+  const handleSignup = async () => {
+    if (password !== confirmPassword) {
+      setError("Les mots de passe ne correspondent pas.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const currentUser = userCredential.user;
+
+      if (currentUser) {
+        await updateProfile(currentUser, {
+          displayName: name,
+        });
+        goToMatch();
+      }
+    } catch (error: any) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -19,38 +54,53 @@ export default function SignupScreen({ navigation }: { navigation: any }) {
       <View style={styles.overlay}>
         <Text style={styles.loginTitle}>S'inscrire</Text>
 
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
             placeholder="Nom"
             placeholderTextColor="#fff"
+            value={name}
+            onChangeText={setName}
           />
           <TextInput
             style={styles.input}
             placeholder="Email"
             placeholderTextColor="#fff"
             keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
           />
           <TextInput
             style={styles.input}
             placeholder="Mot de passe"
             placeholderTextColor="#fff"
             secureTextEntry
+            value={password}
+            onChangeText={setPassword}
           />
           <TextInput
             style={styles.input}
             placeholder="Confirmer le mot de passe"
             placeholderTextColor="#fff"
             secureTextEntry
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
           />
         </View>
 
-        <TouchableOpacity style={styles.loginButton} onPress={goToMatch}>
+        <TouchableOpacity
+          style={styles.loginButton}
+          onPress={handleSignup}
+          disabled={loading}
+        >
           <AntDesign name="login" size={20} color="white" />
-          <Text style={[styles.loginButtonText, { marginLeft: 10 }]}>S'inscrire</Text>
+          <Text style={[styles.loginButtonText, { marginLeft: 10 }]}>
+            {loading ? 'Chargement...' : "S'inscrire"}
+          </Text>
         </TouchableOpacity>
 
-        {/* Bouton se connecter */}
         <TouchableOpacity onPress={goToLogin}>
           <Text style={styles.signupText}>Déjà un compte ? Se connecter</Text>
         </TouchableOpacity>
@@ -78,7 +128,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 40,
-    color: "#fff"
+    color: '#fff',
   },
   inputContainer: {
     width: '80%',
@@ -115,5 +165,9 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginTop: 20,
     textDecorationLine: 'underline',
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
   },
 });

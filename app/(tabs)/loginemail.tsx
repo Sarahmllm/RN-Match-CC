@@ -14,24 +14,22 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
 
   const bgImage = Asset.fromModule(require('../../assets/images/LoginBackground.png')).uri;
 
-  const goToSignup = () => {
-    navigation.navigate('Signup');
+  const goToSignUp = () => {
+    navigation.navigate('SignUp');
   };
 
   const handleLogin = async () => {
     setLoading(true);
-    setError(''); // Réinitialiser l'erreur avant chaque tentative de connexion
+    setError('');
 
     try {
-      // Vérification des informations avant de tenter la connexion
       if (!email || !password) {
         setError("L'email et le mot de passe sont requis.");
         return;
       }
 
-      // Connexion avec Firebase
       await signInWithEmailAndPassword(auth, email, password);
-      navigation.navigate('Match');  // Redirection vers la page 'Match' après la connexion réussie.
+      navigation.navigate('Match');
     } catch (error: any) {
       if (error.code === 'auth/invalid-credential') {
         setError("Identifiants invalides. Vérifiez votre email et mot de passe.");
@@ -86,7 +84,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={goToSignup}>
+        <TouchableOpacity onPress={goToSignUp}>
           <Text style={styles.signupText}>Pas encore de compte ? S'inscrire</Text>
         </TouchableOpacity>
       </View>

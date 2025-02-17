@@ -1,140 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, ImageBackground } from 'react-native';
-import { StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { AntDesign, FontAwesome } from '@expo/vector-icons';
-import { Asset } from 'expo-asset';
-import * as Google from 'expo-auth-session/providers/google';
-import { getAuth, signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
-import { auth } from '../../src/firebaseConfig.js';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import Login from './loginhome';  
+import Match from './loginemail';   
 
+const Stack = createStackNavigator();
 
-export default function LoginScreen() {
-  const bgImage = Asset.fromModule(require('../../assets/images/LoginBackground.png')).uri;
-
-  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    clientId: "",
-  });
-  
-
-  const [message, setMessage] = useState('');
-
-  useEffect(() => {
-    if (response?.type === 'success') {
-      const { id_token } = response.params;
-      const credential = GoogleAuthProvider.credential(id_token);
-      signInWithCredential(auth, credential)
-        .then((userCredential) => {
-          console.log('User signed in:', userCredential.user);
-          setMessage('Connexion réussie');
-          // Naviguer vers la page suivante ou effectuer une autre action
-        })
-        .catch((error) => {
-          console.error(error);
-          setMessage('Erreur de connexion');
-        });
-    }
-  }, [response]);
-
+export default function App() {
   return (
-    <ImageBackground source={{ uri: bgImage }} style={styles.background}>
-      <View style={styles.overlay}>
-        <Text style={styles.loginTitle}>Se connecter</Text>
-
-        <View style={styles.loginButtonContainer}>
-          <TouchableOpacity 
-            style={styles.loginButton} 
-            onPress={() => promptAsync()}
-            disabled={!request}
-          >
-            <AntDesign name="google" size={20} color="white" />
-            <Text style={[styles.loginButtonText, { marginLeft: 10 }]}> Se connecter avec Google</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.loginAppleButton}>
-            <AntDesign name="apple1" size={20} color="white" />
-            <Text style={[styles.loginAppleButtonText, { marginLeft: 10 }]}> Se connecter avec Apple</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.loginButton}>
-            <FontAwesome name="envelope" size={20} color="white" />
-            <Text style={[styles.loginButtonText, { marginLeft: 10 }]}> Se connecter par Email</Text>
-          </TouchableOpacity>
-
-          {/* Afficher le message d'état */}
-          {message ? (
-            <Text style={styles.statusMessage}>{message}</Text>
-          ) : null}
-        </View>
-      </View>
-    </ImageBackground>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen 
+          name="Login" 
+          component={Login} 
+          options={{ headerShown: false }}  
+        />
+        <Stack.Screen 
+          name="Match" 
+          component={Match} 
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    resizeMode: 'cover',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  loginTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 40,
-    color: "#fff"
-  },
-  loginButtonContainer: {
-    width: '100%',
-    position: 'absolute',
-    bottom: 50,
-    alignItems: 'center',
-  },
-  loginButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-    padding: 15,
-    borderRadius: 15,
-    marginVertical: 10,
-    borderWidth: 1,
-    borderColor: '#fff',
-    width: '80%',
-    justifyContent: 'center',
-  },
-
-  loginAppleButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#000',
-    padding: 15,
-    borderRadius: 15,
-    marginVertical: 10,
-    borderWidth: 1,
-    borderColor: '#000',
-    width: '80%',
-    justifyContent: 'center',
-  },
-  loginButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  loginAppleButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  statusMessage: {
-    marginTop: 20,
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-});

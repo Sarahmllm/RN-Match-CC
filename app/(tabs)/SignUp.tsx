@@ -16,8 +16,8 @@ export default function SignupScreen({ navigation }: { navigation: any }) {
 
   const bgImage = Asset.fromModule(require('../../assets/images/LoginBackground.png')).uri;
 
-  const goToMatch = () => {
-    navigation.navigate('Match');
+  const goToLoginEmail = () => {
+    navigation.navigate('LoginEmail');
   };
 
   const goToLogin = () => {
@@ -40,7 +40,7 @@ export default function SignupScreen({ navigation }: { navigation: any }) {
         await updateProfile(currentUser, {
           displayName: name,
         });
-        goToMatch();
+        goToLoginEmail();
       }
     } catch (error: any) {
       setError(error.message);

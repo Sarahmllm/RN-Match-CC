@@ -2,9 +2,10 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Login from './loginhome';  
-import Match from './loginemail';   
+import LoginEmail from './loginemail';   
 import ForgotPassword from './ForgotPassword';  
 import SignUp from './SignUp';  
+import Match from './match';  
 
 const Stack = createStackNavigator();
 
@@ -18,12 +19,16 @@ export default function App() {
           options={{ headerShown: false }}  
         />
         <Stack.Screen 
-          name="Match" 
-          component={Match} 
+          name="LoginEmail" 
+          component={LoginEmail} 
         />
         <Stack.Screen 
           name="ForgotPassword" 
           component={ForgotPassword} 
+        />
+        <Stack.Screen 
+          name="Match" 
+          component={Match} 
         />
       <Stack.Screen 
           name="SignUp" 

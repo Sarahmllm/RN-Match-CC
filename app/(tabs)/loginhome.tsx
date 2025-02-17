@@ -3,12 +3,12 @@ import { StyleSheet } from 'react-native';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { Asset } from 'expo-asset';
 
-export default function LoginScreen({ navigation }: { navigation: any }) {  // Ajoute la prop navigation
+export default function LoginScreen({ navigation }: { navigation: any }) {  
   const bgImage = Asset.fromModule(require('../../assets/images/LoginBackground.png')).uri;
 
-  // Fonction pour naviguer vers la page Match
-  const goToMatch = () => {
-    navigation.navigate('Match');  // Redirige vers la page Match
+  
+  const goToLoginEmail = () => {
+    navigation.navigate('LoginEmail');  
   };
 
   return (
@@ -27,7 +27,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {  // A
             <Text style={[styles.loginAppleButtonText, { marginLeft: 10 }]}> Se connecter avec Apple</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.loginButton} onPress={goToMatch}>
+          <TouchableOpacity style={styles.loginButton} onPress={goToLoginEmail}>
             <FontAwesome name="envelope" size={20} color="white" />
             <Text style={[styles.loginButtonText, { marginLeft: 10 }]}> Se connecter par Email</Text>
           </TouchableOpacity>

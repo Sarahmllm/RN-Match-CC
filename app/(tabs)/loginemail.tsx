@@ -1,21 +1,52 @@
+import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ImageBackground } from 'react-native';
 import { StyleSheet } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { Asset } from 'expo-asset';
+import { auth } from '../../src/firebaseConfig';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function LoginScreen({ navigation }: { navigation: any }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const bgImage = Asset.fromModule(require('../../assets/images/LoginBackground.png')).uri;
 
-  const goToMatch = () => {
-    navigation.navigate('Match');  
-  };
-
-  const goToForgotPassword = () => {
-    navigation.navigate('ForgotPassword');  
-  };
-
   const goToSignup = () => {
-    navigation.navigate('SignUp');  
+    navigation.navigate('Signup');
+  };
+
+  const handleLogin = async () => {
+    setLoading(true);
+    setError(''); // Réinitialiser l'erreur avant chaque tentative de connexion
+
+    try {
+      // Vérification des informations avant de tenter la connexion
+      if (!email || !password) {
+        setError("L'email et le mot de passe sont requis.");
+        return;
+      }
+
+      // Connexion avec Firebase
+      await signInWithEmailAndPassword(auth, email, password);
+      navigation.navigate('Match');  // Redirection vers la page 'Match' après la connexion réussie.
+    } catch (error: any) {
+      if (error.code === 'auth/invalid-credential') {
+        setError("Identifiants invalides. Vérifiez votre email et mot de passe.");
+      } else if (error.code === 'auth/user-not-found') {
+        setError("Cet email n'est pas enregistré.");
+      } else if (error.code === 'auth/wrong-password') {
+        setError("Mot de passe incorrect.");
+      } else if (error.code === 'auth/invalid-email') {
+        setError("Email invalide.");
+      } else {
+        setError("Une erreur inconnue est survenue. Veuillez réessayer.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -23,32 +54,38 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
       <View style={styles.overlay}>
         <Text style={styles.loginTitle}>Se connecter</Text>
 
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
             placeholder="Email"
             placeholderTextColor="#fff"
             keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
           />
           <TextInput
             style={styles.input}
             placeholder="Mot de passe"
             placeholderTextColor="#fff"
             secureTextEntry
+            value={password}
+            onChangeText={setPassword}
           />
         </View>
 
-        <TouchableOpacity style={styles.loginButton} onPress={goToMatch}>
+        <TouchableOpacity
+          style={styles.loginButton}
+          onPress={handleLogin}
+          disabled={loading}
+        >
           <AntDesign name="login" size={20} color="white" />
-          <Text style={[styles.loginButtonText, { marginLeft: 10 }]}>Se connecter</Text>
+          <Text style={[styles.loginButtonText, { marginLeft: 10 }]}>
+            {loading ? 'Chargement...' : "Se connecter"}
+          </Text>
         </TouchableOpacity>
 
-        {/* Bouton mdp */}
-        <TouchableOpacity onPress={goToForgotPassword}>
-          <Text style={styles.forgotPasswordText}>Mot de passe oublié ?</Text>
-        </TouchableOpacity>
-
-        {/* Bouton s'inscrire */}
         <TouchableOpacity onPress={goToSignup}>
           <Text style={styles.signupText}>Pas encore de compte ? S'inscrire</Text>
         </TouchableOpacity>
@@ -76,7 +113,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 40,
-    color: "#fff"
+    color: '#fff',
   },
   inputContainer: {
     width: '80%',
@@ -109,14 +146,13 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
   },
-  forgotPasswordText: {
-    color: '#fff',
-    marginTop: 10,
-    textDecorationLine: 'underline',
-  },
   signupText: {
     color: '#fff',
     marginTop: 20,
     textDecorationLine: 'underline',
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
   },
 });

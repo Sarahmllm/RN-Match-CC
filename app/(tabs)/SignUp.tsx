@@ -3,27 +3,28 @@ import { StyleSheet } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { Asset } from 'expo-asset';
 
-export default function LoginScreen({ navigation }: { navigation: any }) {
+export default function SignupScreen({ navigation }: { navigation: any }) {
   const bgImage = Asset.fromModule(require('../../assets/images/LoginBackground.png')).uri;
 
   const goToMatch = () => {
     navigation.navigate('Match');  
   };
 
-  const goToForgotPassword = () => {
-    navigation.navigate('ForgotPassword');  
-  };
-
-  const goToSignup = () => {
-    navigation.navigate('SignUp');  
+  const goToLogin = () => {
+    navigation.navigate('Login');  
   };
 
   return (
     <ImageBackground source={{ uri: bgImage }} style={styles.background}>
       <View style={styles.overlay}>
-        <Text style={styles.loginTitle}>Se connecter</Text>
+        <Text style={styles.loginTitle}>S'inscrire</Text>
 
         <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Nom"
+            placeholderTextColor="#fff"
+          />
           <TextInput
             style={styles.input}
             placeholder="Email"
@@ -36,21 +37,22 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
             placeholderTextColor="#fff"
             secureTextEntry
           />
+          <TextInput
+            style={styles.input}
+            placeholder="Confirmer le mot de passe"
+            placeholderTextColor="#fff"
+            secureTextEntry
+          />
         </View>
 
         <TouchableOpacity style={styles.loginButton} onPress={goToMatch}>
           <AntDesign name="login" size={20} color="white" />
-          <Text style={[styles.loginButtonText, { marginLeft: 10 }]}>Se connecter</Text>
+          <Text style={[styles.loginButtonText, { marginLeft: 10 }]}>S'inscrire</Text>
         </TouchableOpacity>
 
-        {/* Bouton mdp */}
-        <TouchableOpacity onPress={goToForgotPassword}>
-          <Text style={styles.forgotPasswordText}>Mot de passe oublié ?</Text>
-        </TouchableOpacity>
-
-        {/* Bouton s'inscrire */}
-        <TouchableOpacity onPress={goToSignup}>
-          <Text style={styles.signupText}>Pas encore de compte ? S'inscrire</Text>
+        {/* Bouton se connecter */}
+        <TouchableOpacity onPress={goToLogin}>
+          <Text style={styles.signupText}>Déjà un compte ? Se connecter</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
@@ -108,11 +110,6 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: '#fff',
     fontWeight: 'bold',
-  },
-  forgotPasswordText: {
-    color: '#fff',
-    marginTop: 10,
-    textDecorationLine: 'underline',
   },
   signupText: {
     color: '#fff',

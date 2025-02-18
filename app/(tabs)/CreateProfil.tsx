@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, Alert, ImageBackground, StyleSheet } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
+import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { AntDesign } from '@expo/vector-icons';
@@ -9,30 +9,27 @@ import { Asset } from 'expo-asset';
 const CreateProfile = () => {
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
-  const [profileImage, setProfileImage] = useState<any>(null);
+  const [profileImage, setProfileImage] = useState(null);
+  const [gender, setGender] = useState('');
   const [error, setError] = useState('');
 
   const bgImage = Asset.fromModule(require('../../assets/images/LoginBackground.png')).uri;
 
   const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    const result = await launchImageLibraryAsync({
+      mediaTypes: MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 4],
       quality: 1,
     });
-
-    if (!result.canceled && result.assets) {  
-      setProfileImage(result.assets[0].uri); 
-    }
+    if (!result.canceled && result.assets) setProfileImage(result.assets[0].uri);
   };
 
   const handleSubmit = async () => {
-    if (!name || !age || !profileImage) {
+    if (!name || !age || !profileImage || !gender) {
       setError('Veuillez remplir tous les champs.');
       return;
     }
-
     try {
       const response = await fetch(profileImage);
       const blob = await response.blob();
@@ -47,16 +44,13 @@ const CreateProfile = () => {
           Alert.alert('Erreur', 'L\'upload de la photo a échoué.');
         },
         async () => {
-          // Once the upload is complete, get the download URL
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-
-          const userRef = doc(getFirestore(), 'users', name);
-          await setDoc(userRef, {
+          await setDoc(doc(getFirestore(), 'users', name), {
             name,
             age,
+            gender,
             profilePicture: downloadURL,
           });
-
           Alert.alert('Succès', 'Profil créé avec succès');
         }
       );
@@ -70,41 +64,23 @@ const CreateProfile = () => {
     <ImageBackground source={{ uri: bgImage }} style={styles.background}>
       <View style={styles.overlay}>
         <Text style={styles.title}>Créer Profil</Text>
-
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Nom"
-            placeholderTextColor="#fff"
-            value={name}
-            onChangeText={setName}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Âge"
-            placeholderTextColor="#fff"
-            keyboardType="numeric"
-            value={age}
-            onChangeText={setAge}
-          />
+        {error && <Text style={styles.errorText}>{error}</Text>}
+        <TextInput style={styles.input} placeholder="Nom" placeholderTextColor="#fff" value={name} onChangeText={setName} />
+        <TextInput style={styles.input} placeholder="Âge" placeholderTextColor="#fff" keyboardType="numeric" value={age} onChangeText={setAge} />
+        <View style={styles.genderButtons}>
+          <TouchableOpacity style={[styles.genderButton, gender === 'Homme' && styles.selectedButton]} onPress={() => setGender('Homme')}>
+            <Text style={styles.buttonText}>Homme</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.genderButton, gender === 'Femme' && styles.selectedButton]} onPress={() => setGender('Femme')}>
+            <Text style={styles.buttonText}>Femme</Text>
+          </TouchableOpacity>
         </View>
-
-        <TouchableOpacity
-          style={styles.imageButton}
-          onPress={pickImage}
-        >
+        <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
           <AntDesign name="camera" size={20} color="white" />
           <Text style={styles.buttonText}>Choisir une photo</Text>
         </TouchableOpacity>
-
         {profileImage && <Image source={{ uri: profileImage }} style={styles.profileImage} />}
-
-        <TouchableOpacity
-          style={styles.submitButton}
-          onPress={handleSubmit}
-        >
+        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
           <AntDesign name="checkcircle" size={20} color="white" />
           <Text style={styles.buttonText}>Créer Profil</Text>
         </TouchableOpacity>
@@ -134,10 +110,6 @@ const styles = StyleSheet.create({
     marginBottom: 40,
     color: '#fff',
   },
-  inputContainer: {
-    width: '80%',
-    marginBottom: 30,
-  },
   input: {
     height: 50,
     backgroundColor: 'transparent',
@@ -148,6 +120,25 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     color: '#fff',
     fontSize: 16,
+    width: '80%',
+  },
+  genderButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '80%',
+  },
+  genderButton: {
+    width: '48%',
+    padding: 15,
+    backgroundColor: 'transparent',
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  selectedButton: {
+    backgroundColor: '#4CAF50',
   },
   imageButton: {
     flexDirection: 'row',

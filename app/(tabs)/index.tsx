@@ -22,22 +22,28 @@ export default function App() {
         <Stack.Screen 
           name="LoginEmail" 
           component={LoginEmail} 
+          options={{ headerShown: false }}  
+
         />
         <Stack.Screen 
           name="ForgotPassword" 
           component={ForgotPassword} 
+          options={{ headerShown: false }}  
         />
          <Stack.Screen 
           name="CreateProfil" 
           component={CreateProfil} 
+          options={{ headerShown: false }}  
         />
         <Stack.Screen 
           name="Match" 
           component={Match} 
+          options={{ headerShown: false }}  
         />
       <Stack.Screen 
           name="SignUp" 
           component={SignUp} 
+          options={{ headerShown: false }}  
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -7,9 +7,10 @@ import { AntDesign } from '@expo/vector-icons';
 import { Asset } from 'expo-asset';
 
 const CreateProfile = () => {
+  const [firstName, setFirstName] = useState('');
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
-  const [profileImage, setProfileImage] = useState(null);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   const [gender, setGender] = useState('');
   const [error, setError] = useState('');
 
@@ -26,7 +27,7 @@ const CreateProfile = () => {
   };
 
   const handleSubmit = async () => {
-    if (!name || !age || !profileImage || !gender) {
+    if (!firstName || !name || !age || !profileImage || !gender) {
       setError('Veuillez remplir tous les champs.');
       return;
     }
@@ -41,11 +42,12 @@ const CreateProfile = () => {
         null,
         (error) => {
           console.error('Upload failed', error);
-          Alert.alert('Erreur', 'L\'upload de la photo a échoué.');
+          Alert.alert('Erreur', "L'upload de la photo a échoué.");
         },
         async () => {
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
           await setDoc(doc(getFirestore(), 'users', name), {
+            firstName,
             name,
             age,
             gender,
@@ -65,6 +67,7 @@ const CreateProfile = () => {
       <View style={styles.overlay}>
         <Text style={styles.title}>Créer Profil</Text>
         {error && <Text style={styles.errorText}>{error}</Text>}
+        <TextInput style={styles.input} placeholder="Prénom" placeholderTextColor="#fff" value={firstName} onChangeText={setFirstName} />
         <TextInput style={styles.input} placeholder="Nom" placeholderTextColor="#fff" value={name} onChangeText={setName} />
         <TextInput style={styles.input} placeholder="Âge" placeholderTextColor="#fff" keyboardType="numeric" value={age} onChangeText={setAge} />
         <View style={styles.genderButtons}>

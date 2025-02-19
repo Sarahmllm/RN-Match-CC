@@ -50,10 +50,11 @@ export default function App() {
           name="SignUp" 
           component={SignUp} 
           options={{
-            title: "Retour",
+            title: "",
             headerTransparent: true,
-            headerTitle: "",
             headerTintColor: "#fff",
+            headerBackTitle: "Retour",
+            headerBackTitleStyle: { marginRight: 25, fontSize: 16 }, 
           }}  
         />
       </Stack.Navigator>

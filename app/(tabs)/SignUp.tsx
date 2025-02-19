@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ImageBackground } from 'react-native';
 import { StyleSheet } from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Feather } from '@expo/vector-icons';
 import { Asset } from 'expo-asset';
 import { auth } from '../../src/firebaseConfig';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
@@ -13,15 +13,12 @@ export default function SignupScreen({ navigation }: { navigation: any }) {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
 
   const bgImage = Asset.fromModule(require('../../assets/images/LoginBackground.png')).uri;
 
-  const goToLoginEmail = () => {
-    navigation.navigate('LoginEmail');
-  };
-
-  const goToLogin = () => {
-    navigation.navigate('Login');
+  const togglePasswordVisibility = () => {
+    setSecureTextEntry(!secureTextEntry);
   };
 
   const handleSignup = async () => {
@@ -31,16 +28,13 @@ export default function SignupScreen({ navigation }: { navigation: any }) {
     }
 
     setLoading(true);
-
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const currentUser = userCredential.user;
 
       if (currentUser) {
-        await updateProfile(currentUser, {
-          displayName: name,
-        });
-        goToLoginEmail();
+        await updateProfile(currentUser, { displayName: name });
+        navigation.navigate('LoginEmail');
       }
     } catch (error: any) {
       setError(error.message);
@@ -53,7 +47,6 @@ export default function SignupScreen({ navigation }: { navigation: any }) {
     <ImageBackground source={{ uri: bgImage }} style={styles.background}>
       <View style={styles.overlay}>
         <Text style={styles.loginTitle}>S'inscrire</Text>
-
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
         <View style={styles.inputContainer}>
@@ -72,36 +65,46 @@ export default function SignupScreen({ navigation }: { navigation: any }) {
             value={email}
             onChangeText={setEmail}
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Mot de passe"
-            placeholderTextColor="#fff"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Confirmer le mot de passe"
-            placeholderTextColor="#fff"
-            secureTextEntry
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-          />
+
+          {/* Champ Mot de passe */}
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="Mot de passe"
+              placeholderTextColor="#fff"
+              secureTextEntry={secureTextEntry}
+              value={password}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity onPress={togglePasswordVisibility}>
+              <Feather name={secureTextEntry ? 'eye-off' : 'eye'} size={20} color="white" />
+            </TouchableOpacity>
+          </View>
+
+          {/* Champ Confirmer le mot de passe */}
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="Confirmer le mot de passe"
+              placeholderTextColor="#fff"
+              secureTextEntry={secureTextEntry}
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+            />
+            <TouchableOpacity onPress={togglePasswordVisibility}>
+              <Feather name={secureTextEntry ? 'eye-off' : 'eye'} size={20} color="white" />
+            </TouchableOpacity>
+          </View>
         </View>
 
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={handleSignup}
-          disabled={loading}
-        >
+        <TouchableOpacity style={styles.loginButton} onPress={handleSignup} disabled={loading}>
           <AntDesign name="login" size={20} color="white" />
           <Text style={[styles.loginButtonText, { marginLeft: 10 }]}>
             {loading ? 'Chargement...' : "S'inscrire"}
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={goToLogin}>
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
           <Text style={styles.signupText}>Déjà un compte ? Se connecter</Text>
         </TouchableOpacity>
       </View>
@@ -142,6 +145,25 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginVertical: 10,
     paddingLeft: 15,
+    color: '#fff',
+    fontSize: 16,
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#fff',
+    borderRadius: 15,
+    marginVertical: 10,
+    paddingLeft: 15,
+    paddingRight: 10,
+    width: '100%',
+    height: 50,
+    justifyContent: 'space-between',
+  },
+  passwordInput: {
+    flex: 1,
     color: '#fff',
     fontSize: 16,
   },

@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   loginTitle: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
     marginBottom: 40,
     color: '#fff',

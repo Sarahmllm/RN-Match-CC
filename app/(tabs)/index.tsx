@@ -17,18 +17,24 @@ export default function App() {
         <Stack.Screen 
           name="Login" 
           component={Login} 
-          options={{ headerShown: false }}  
+          options={{ 
+            title: "Retour",
+            headerShown: false,
+          }}   
         />
         <Stack.Screen 
           name="LoginEmail" 
           component={LoginEmail} 
-          options={{ headerShown: false }}  
-
+          options={{
+            headerTransparent: true,  
+            headerTitle: "",          
+            headerTintColor: "#fff",
+          }} 
         />
         <Stack.Screen 
           name="ForgotPassword" 
           component={ForgotPassword} 
-          options={{ headerShown: false }}  
+          options={{ headerShown: true }}  
         />
          <Stack.Screen 
           name="CreateProfil" 
@@ -38,15 +44,19 @@ export default function App() {
         <Stack.Screen 
           name="Match" 
           component={Match} 
-          options={{ headerShown: false }}  
+          options={{ headerShown: true }}  
         />
       <Stack.Screen 
           name="SignUp" 
           component={SignUp} 
-          options={{ headerShown: false }}  
+          options={{
+            title: "Retour",
+            headerTransparent: true,
+            headerTitle: "",
+            headerTintColor: "#fff",
+          }}  
         />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
-

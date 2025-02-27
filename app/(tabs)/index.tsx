@@ -6,7 +6,6 @@ import LoginEmail from './loginemail';
 import ForgotPassword from './ForgotPassword';  
 import SignUp from './SignUp';  
 import Match from './match';  
-import CreateProfil from './CreateProfil';  
 
 const Stack = createStackNavigator();
 
@@ -36,17 +35,12 @@ export default function App() {
           component={ForgotPassword} 
           options={{ headerShown: true }}  
         />
-         <Stack.Screen 
-          name="CreateProfil" 
-          component={CreateProfil} 
-          options={{ headerShown: false }}  
-        />
         <Stack.Screen 
           name="Match" 
           component={Match} 
           options={{ headerShown: true }}  
         />
-      <Stack.Screen 
+        <Stack.Screen 
           name="SignUp" 
           component={SignUp} 
           options={{

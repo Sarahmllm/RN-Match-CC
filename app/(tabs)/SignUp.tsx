@@ -1,24 +1,62 @@
-import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ImageBackground } from 'react-native';
+import { useState } from 'react'; 
+import { View, Text, TextInput, TouchableOpacity, Image, ImageBackground } from 'react-native';
 import { StyleSheet } from 'react-native';
-import { AntDesign, Feather } from '@expo/vector-icons';
-import { Asset } from 'expo-asset';
+import { AntDesign, FontAwesome } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { auth } from '../../src/firebaseConfig';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { doc, setDoc, getFirestore } from 'firebase/firestore';
+import { Asset } from 'expo-asset';
+
+const bgImage = Asset.fromModule(require('../../assets/images/LoginBackground.png')).uri;
 
 export default function SignupScreen({ navigation }: { navigation: any }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [name, setName] = useState('');
-  const [error, setError] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [birthdate, setBirthdate] = useState('');
+  const [photo, setPhoto] = useState<string | null>(null);
+  const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
 
-  const bgImage = Asset.fromModule(require('../../assets/images/LoginBackground.png')).uri;
+  const storage = getStorage();
+  const db = getFirestore();
 
-  const togglePasswordVisibility = () => {
-    setSecureTextEntry(!secureTextEntry);
+  // Vérification des permissions pour accéder à la galerie
+  const checkPermissions = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      setError("Permission d'accès à la galerie refusée.");
+      return false;
+    }
+    return true;
+  };
+
+  const pickImage = async () => {
+    const hasPermission = await checkPermissions();
+    if (!hasPermission) return;
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets.length > 0) {
+      setPhoto(result.assets[0].uri);
+    }
+  };
+
+  // Utilisation de fetch pour convertir l'URI en blob
+  const uriToBlob = async (uri: string): Promise<Blob> => {
+    const response = await fetch(uri);
+    return response.blob();
   };
 
   const handleSignup = async () => {
@@ -31,13 +69,48 @@ export default function SignupScreen({ navigation }: { navigation: any }) {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const currentUser = userCredential.user;
+      let photoURL = '';
+
+      if (photo) {
+        const resizedImage = await ImageManipulator.manipulateAsync(
+          photo,
+          [{ resize: { width: 800 } }],
+          { compress: 0.7 }
+        );
+
+        // Conversion de l'URI en blob
+        const blob = await uriToBlob(resizedImage.uri);
+
+        const photoRef = ref(storage, `users/${currentUser.uid}/profile.jpg`);
+        try {
+          await uploadBytes(photoRef, blob);
+          photoURL = await getDownloadURL(photoRef);
+        } catch (uploadError) {
+          console.error("Erreur lors de l'upload :", uploadError);
+          setError("Une erreur est survenue lors du téléchargement de la photo. Veuillez réessayer.");
+          return;
+        }
+      }
 
       if (currentUser) {
-        await updateProfile(currentUser, { displayName: name });
-        navigation.navigate('LoginEmail');
+        await updateProfile(currentUser, { displayName: `${firstName} ${lastName}`, photoURL });
+
+        await setDoc(doc(db, 'users', currentUser.uid), {
+          firstName,
+          lastName,
+          email,
+          birthdate,
+          photoURL,
+          createdAt: new Date(),
+        });
+
+        navigation.navigate('Match');
       }
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("Erreur inconnue lors de l'inscription : ", error);
+        setError(`Une erreur inconnue est survenue : ${error.message}`);
+      }
     } finally {
       setLoading(false);
     }
@@ -49,63 +122,26 @@ export default function SignupScreen({ navigation }: { navigation: any }) {
         <Text style={styles.loginTitle}>S'inscrire</Text>
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
+        <TouchableOpacity onPress={pickImage} style={styles.photoContainer}>
+          {photo ? (
+            <Image source={{ uri: photo }} style={styles.photo} />
+          ) : (
+            <FontAwesome name="user-circle" size={80} color="#fff" />
+          )}
+        </TouchableOpacity>
+
         <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Nom"
-            placeholderTextColor="#fff"
-            value={name}
-            onChangeText={setName}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="#fff"
-            keyboardType="email-address"
-            value={email}
-            onChangeText={setEmail}
-          />
-
-          {/* Champ Mot de passe */}
-          <View style={styles.passwordContainer}>
-            <TextInput
-              style={styles.passwordInput}
-              placeholder="Mot de passe"
-              placeholderTextColor="#fff"
-              secureTextEntry={secureTextEntry}
-              value={password}
-              onChangeText={setPassword}
-            />
-            <TouchableOpacity onPress={togglePasswordVisibility}>
-              <Feather name={secureTextEntry ? 'eye-off' : 'eye'} size={20} color="white" />
-            </TouchableOpacity>
-          </View>
-
-          {/* Champ Confirmer le mot de passe */}
-          <View style={styles.passwordContainer}>
-            <TextInput
-              style={styles.passwordInput}
-              placeholder="Confirmer le mot de passe"
-              placeholderTextColor="#fff"
-              secureTextEntry={secureTextEntry}
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-            />
-            <TouchableOpacity onPress={togglePasswordVisibility}>
-              <Feather name={secureTextEntry ? 'eye-off' : 'eye'} size={20} color="white" />
-            </TouchableOpacity>
-          </View>
+          <TextInput style={styles.input} placeholder="Prénom" value={firstName} onChangeText={setFirstName} />
+          <TextInput style={styles.input} placeholder="Nom" value={lastName} onChangeText={setLastName} />
+          <TextInput style={styles.input} placeholder="Date de naissance (JJ/MM/AAAA)" value={birthdate} onChangeText={setBirthdate} />
+          <TextInput style={styles.input} placeholder="Email" keyboardType="email-address" value={email} onChangeText={setEmail} />
+          <TextInput style={styles.input} placeholder="Mot de passe" secureTextEntry={secureTextEntry} value={password} onChangeText={setPassword} />
+          <TextInput style={styles.input} placeholder="Confirmer le mot de passe" secureTextEntry={secureTextEntry} value={confirmPassword} onChangeText={setConfirmPassword} />
         </View>
 
         <TouchableOpacity style={styles.loginButton} onPress={handleSignup} disabled={loading}>
           <AntDesign name="login" size={20} color="white" />
-          <Text style={[styles.loginButtonText, { marginLeft: 10 }]}>
-            {loading ? 'Chargement...' : "S'inscrire"}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-          <Text style={styles.signupText}>Déjà un compte ? Se connecter</Text>
+          <Text style={styles.loginButtonText}>{loading ? 'Chargement...' : "S'inscrire"}</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
@@ -113,83 +149,14 @@ export default function SignupScreen({ navigation }: { navigation: any }) {
 }
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    resizeMode: 'cover',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  loginTitle: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    marginBottom: 40,
-    color: '#fff',
-  },
-  inputContainer: {
-    width: '80%',
-    marginBottom: 30,
-  },
-  input: {
-    height: 50,
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#fff',
-    borderRadius: 15,
-    marginVertical: 10,
-    paddingLeft: 15,
-    color: '#fff',
-    fontSize: 16,
-  },
-  passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#fff',
-    borderRadius: 15,
-    marginVertical: 10,
-    paddingLeft: 15,
-    paddingRight: 10,
-    width: '100%',
-    height: 50,
-    justifyContent: 'space-between',
-  },
-  passwordInput: {
-    flex: 1,
-    color: '#fff',
-    fontSize: 16,
-  },
-  loginButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-    padding: 15,
-    borderRadius: 15,
-    marginVertical: 10,
-    borderWidth: 1,
-    borderColor: '#fff',
-    width: '80%',
-    justifyContent: 'center',
-  },
-  loginButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  signupText: {
-    color: '#fff',
-    marginTop: 20,
-    textDecorationLine: 'underline',
-  },
-  errorText: {
-    color: 'red',
-    marginBottom: 10,
-  },
+  background: { flex: 1, width: '100%' },
+  overlay: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
+  loginTitle: { fontSize: 26, fontWeight: 'bold', color: '#fff' },
+  inputContainer: { width: '80%', marginBottom: 20 },
+  input: { height: 50, borderColor: '#fff', borderWidth: 1, borderRadius: 15, paddingLeft: 15, color: '#fff', marginBottom: 10 },
+  loginButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', padding: 15, borderRadius: 15 },
+  loginButtonText: { marginLeft: 10, fontWeight: 'bold' },
+  errorText: { color: 'red', marginBottom: 10 },
+  photoContainer: { width: 100, height: 100, borderRadius: 50, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginBottom: 20, backgroundColor: '#ccc' },
+  photo: { width: '100%', height: '100%', borderRadius: 50 },
 });

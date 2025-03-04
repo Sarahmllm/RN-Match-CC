@@ -6,7 +6,6 @@ import { Asset } from 'expo-asset';
 export default function LoginScreen({ navigation }: { navigation: any }) {  
   const bgImage = Asset.fromModule(require('../../assets/images/LoginBackground.png')).uri;
 
-  
   const goToLoginEmail = () => {
     navigation.navigate('LoginEmail');  
   };
@@ -31,6 +30,10 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
             <FontAwesome name="envelope" size={20} color="white" />
             <Text style={[styles.loginButtonText, { marginLeft: 10 }]}> Se connecter par Email</Text>
           </TouchableOpacity>
+        </View>
+        
+        <View style={styles.helpContainer}>
+          <Text style={styles.helpText}>Aide & Service</Text>
         </View>
       </View>
     </ImageBackground>
@@ -61,7 +64,7 @@ const styles = StyleSheet.create({
   loginButtonContainer: {
     width: '100%',
     position: 'absolute',
-    bottom: 50,
+    bottom: 80,
     alignItems: 'center',
   },
   loginButton: {
@@ -96,4 +99,15 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
   },
+  helpContainer: {
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: 40,
+  },
+  helpText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'normal',
+    textDecorationLine: 'underline',
+  }
 });

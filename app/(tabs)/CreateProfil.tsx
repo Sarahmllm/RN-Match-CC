@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
 import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -26,6 +26,10 @@ const EditProfile = () => {
   };
 
   const handleSaveProfile = async () => {
+    if (!userFirstName || !birthDate || !userProfileImage) {
+      Alert.alert('Erreur', 'Tous les champs sont obligatoires');
+      return;
+    }
     if (user) {
       const userRef = doc(db, 'users', user.email!);
       await setDoc(userRef, {
@@ -40,64 +44,68 @@ const EditProfile = () => {
 
   const handleDateChange = (text: string) => {
     const formattedText = text
-      .replace(/[^0-9]/g, '') // Remove all non-numeric characters
-      .replace(/(\d{2})(\d{2})/, '$1/$2') // Add '/' after the day
-      .replace(/(\d{2})(\d{4})/, '$1/$2'); // Add '/' after the month
+      .replace(/[^0-9]/g, '')
+      .replace(/(\d{2})(\d{2})/, '$1/$2')
+      .replace(/(\d{2})(\d{4})/, '$1/$2');
     setBirthDate(formattedText);
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.containerProfile}>
-      <Text style={styles.pageTitle}>Edit Profile</Text>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.containerProfile}
+    >
+      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+        <Text style={styles.pageTitle}>Edit Profile</Text>
+        {user && (
+          <Text style={styles.emailText}>Email: {user.email}</Text>
+        )}
 
-      {/* Affichage de l'email de l'utilisateur connecté */}
-      {user && (
-        <Text style={styles.emailText}>Email: {user.email}</Text>
-      )}
-
-      <View style={styles.profileSection}>
-        <TouchableOpacity onPress={pickProfileImage} style={styles.profileImageContainer}>
-          {userProfileImage ? (
-            <Image source={{ uri: userProfileImage }} style={styles.profileImage} />
-          ) : (
-            <View style={styles.profilePlaceholder}>
-              <AntDesign name="user" size={80} color="gray" />
-            </View>
-          )}
+        <View style={styles.profileSection}>
+          <TouchableOpacity onPress={pickProfileImage} style={styles.profileImageContainer}>
+            {userProfileImage ? (
+              <Image source={{ uri: userProfileImage }} style={styles.profileImage} />
+            ) : (
+              <View style={styles.profilePlaceholder}>
+                <AntDesign name="user" size={80} color="gray" />
+              </View>
+            )}
+          </TouchableOpacity>
+          <Text style={styles.profilePhotoLabel}>PROFILE PHOTO</Text>
+        </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.inputLabel}>PRÉNOM</Text>
+          <TextInput 
+            style={styles.inputField} 
+            value={userFirstName} 
+            onChangeText={setUserFirstName} 
+            placeholder="Votre prénom"
+            placeholderTextColor="gray"
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.inputLabel}>DATE DE NAISSANCE</Text>
+          <TextInput 
+            style={styles.inputField} 
+            value={birthDate} 
+            onChangeText={handleDateChange} 
+            placeholder="jj/mm/aaaa"
+            maxLength={10}
+            keyboardType="numeric"
+            placeholderTextColor="gray"
+          />
+        </View>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSaveProfile}>
+          <Text style={styles.saveButtonText}>Sauvegarder</Text>
         </TouchableOpacity>
-        <Text style={styles.profilePhotoLabel}>PROFILE PHOTO</Text>
-      </View>
-      <View style={styles.inputContainer}>
-        <Text style={styles.inputLabel}>PRÉNOM</Text>
-        <TextInput 
-          style={styles.inputField} 
-          value={userFirstName} 
-          onChangeText={setUserFirstName} 
-          placeholder="Votre prénom"
-          placeholderTextColor="gray" // Change la couleur du texte de l'espace réservé (placeholder)
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Text style={styles.inputLabel}>DATE DE NAISSANCE</Text>
-        <TextInput 
-          style={styles.inputField} 
-          value={birthDate} 
-          onChangeText={handleDateChange} 
-          placeholder="jj/mm/aaaa"
-          maxLength={10}
-          keyboardType="numeric" // Afficher un clavier numérique
-          placeholderTextColor="gray" // Change la couleur du texte de l'espace réservé (placeholder)
-        />
-      </View>
-      <TouchableOpacity style={styles.saveButton} onPress={handleSaveProfile}>
-        <Text style={styles.saveButtonText}>Sauvegarder</Text>
-      </TouchableOpacity>
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  containerProfile: { flexGrow: 1, backgroundColor: 'white', padding: 20, paddingTop: 80 },
+  containerProfile: { flex: 1, backgroundColor: 'white', paddingTop: 80 },
+  scrollViewContainer: { flexGrow: 1, padding: 20 },
   pageTitle: { fontSize: 32, fontWeight: 'bold', marginBottom: 20 },
   emailText: { fontSize: 16, color: 'black', marginBottom: 10 },
   profileSection: { alignItems: 'center', marginBottom: 20 },
@@ -107,7 +115,7 @@ const styles = StyleSheet.create({
   profilePhotoLabel: { fontSize: 14, fontWeight: 'bold', color: 'black', marginTop: 10 },
   inputContainer: { marginBottom: 15 },
   inputLabel: { fontSize: 14, fontWeight: 'bold', color: 'black', marginBottom: 5 },
-  inputField: { height: 50, borderWidth: 1, borderColor: '#E0E0E0', borderRadius: 10, paddingLeft: 10, color: 'black' }, // Change la couleur du texte dans le champ
+  inputField: { height: 50, borderWidth: 1, borderColor: '#E0E0E0', borderRadius: 10, paddingLeft: 10, color: 'black' },
   saveButton: { backgroundColor: 'black', padding: 15, borderRadius: 10, alignItems: 'center', marginTop: 20 },
   saveButtonText: { color: 'white', fontSize: 16, fontWeight: 'bold' },
 });

@@ -5,11 +5,11 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../src/firebaseConfig';
 
-import Login from './loginhome';  
-import LoginEmail from './loginemail';   
+import Login from './loginHome';  
+import LoginEmail from './loginEmail';   
 import ForgotPassword from './ForgotPassword';  
 import SignUp from './SignUp';  
-import Match from './match';  
+import Match from './matchSwipe';  
 import CreateProfil from './CreateProfil';  
 
 const Stack = createStackNavigator();

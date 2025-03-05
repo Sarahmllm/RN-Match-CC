@@ -1,7 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import Match from './match';  
+import Match from './matchSwipe';  
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();

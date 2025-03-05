@@ -4,16 +4,32 @@ import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
 import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
 
 const EditProfile = () => {
   const [userFirstName, setUserFirstName] = useState('');
   const [birthDate, setBirthDate] = useState('');
   const [userProfileImage, setUserProfileImage] = useState<string | null>(null);
+  const [isProfileLoaded, setIsProfileLoaded] = useState(false);
   const navigation = useNavigation<any>();
   const auth = getAuth();
   const db = getFirestore();
   const user = auth.currentUser;
+
+  useEffect(() => {
+    const checkUserProfile = async () => {
+      if (user) {
+        const userRef = doc(db, 'users', user.email!);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          navigation.navigate('Match');
+        } else {
+          setIsProfileLoaded(true);
+        }
+      }
+    };
+    checkUserProfile();
+  }, [user, db, navigation]);
 
   const pickProfileImage = async () => {
     const result = await launchImageLibraryAsync({
@@ -38,7 +54,7 @@ const EditProfile = () => {
         profileImage: userProfileImage,
         email: user.email,
       });
-      navigation.navigate('Match' as never);
+      navigation.navigate('Match');
     }
   };
 
@@ -49,6 +65,8 @@ const EditProfile = () => {
       .replace(/(\d{2})(\d{4})/, '$1/$2');
     setBirthDate(formattedText);
   };
+
+  if (!isProfileLoaded) return null; // Wait for profile check to complete
 
   return (
     <KeyboardAvoidingView

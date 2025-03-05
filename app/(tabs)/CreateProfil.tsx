@@ -41,6 +41,12 @@ const EditProfile = () => {
   return (
     <ScrollView contentContainerStyle={styles.containerProfile}>
       <Text style={styles.pageTitle}>Edit Profile</Text>
+
+      {/* Affichage de l'email de l'utilisateur connecté */}
+      {user && (
+        <Text style={styles.emailText}>Email: {user.email}</Text>
+      )}
+
       <View style={styles.profileSection}>
         <TouchableOpacity onPress={pickProfileImage} style={styles.profileImageContainer}>
           {userProfileImage ? (
@@ -81,6 +87,7 @@ const EditProfile = () => {
 const styles = StyleSheet.create({
   containerProfile: { flexGrow: 1, backgroundColor: 'white', padding: 20, paddingTop: 80 },
   pageTitle: { fontSize: 32, fontWeight: 'bold', marginBottom: 20 },
+  emailText: { fontSize: 16, color: 'black', marginBottom: 10 },
   profileSection: { alignItems: 'center', marginBottom: 20 },
   profileImageContainer: { justifyContent: 'center', alignItems: 'center' },
   profileImage: { width: 150, height: 150, borderRadius: 125 },

@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../../src/firebaseConfig';
 import Login from './loginhome';  
 import LoginEmail from './loginemail';   
 import ForgotPassword from './ForgotPassword';  
@@ -11,9 +13,23 @@ import CreateProfil from './CreateProfil';
 const Stack = createStackNavigator();
 
 export default function App() {
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser); 
+      } else {
+        setUser(null); 
+      }
+    });
+
+    return () => unsubscribe(); 
+  }, []);
+
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName={user ? "Match" : "Login"}>
         <Stack.Screen 
           name="Login" 
           component={Login} 
@@ -36,7 +52,7 @@ export default function App() {
           component={ForgotPassword} 
           options={{ headerShown: true }}  
         />
-         <Stack.Screen 
+        <Stack.Screen 
           name="CreateProfil" 
           component={CreateProfil} 
           options={{ headerShown: false }}  
@@ -46,7 +62,7 @@ export default function App() {
           component={Match} 
           options={{ headerShown: true }}  
         />
-      <Stack.Screen 
+        <Stack.Screen 
           name="SignUp" 
           component={SignUp} 
           options={{

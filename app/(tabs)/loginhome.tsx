@@ -33,7 +33,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
         </View>
         
         <View style={styles.helpContainer}>
-          <Text style={styles.helpText}>Aide & Service</Text>
+          <Text style={styles.helpText}>Aides & services</Text>
         </View>
       </View>
     </ImageBackground>

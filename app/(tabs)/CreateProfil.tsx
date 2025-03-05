@@ -7,8 +7,8 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 
 const EditProfile = () => {
-  const [userName, setUserName] = useState('');
   const [userFirstName, setUserFirstName] = useState('');
+  const [birthDate, setBirthDate] = useState('');
   const [userProfileImage, setUserProfileImage] = useState<string | null>(null);
   const navigation = useNavigation<any>();
   const auth = getAuth();
@@ -29,13 +29,21 @@ const EditProfile = () => {
     if (user) {
       const userRef = doc(db, 'users', user.email!);
       await setDoc(userRef, {
-        nom: userName,
         prenom: userFirstName,
+        birthDate: birthDate,
         profileImage: userProfileImage,
         email: user.email,
       });
       navigation.navigate('Match' as never);
     }
+  };
+
+  const handleDateChange = (text: string) => {
+    const formattedText = text
+      .replace(/[^0-9]/g, '') // Remove all non-numeric characters
+      .replace(/(\d{2})(\d{2})/, '$1/$2') // Add '/' after the day
+      .replace(/(\d{2})(\d{4})/, '$1/$2'); // Add '/' after the month
+    setBirthDate(formattedText);
   };
 
   return (
@@ -60,21 +68,25 @@ const EditProfile = () => {
         <Text style={styles.profilePhotoLabel}>PROFILE PHOTO</Text>
       </View>
       <View style={styles.inputContainer}>
-        <Text style={styles.inputLabel}>NOM</Text>
-        <TextInput 
-          style={styles.inputField} 
-          value={userName} 
-          onChangeText={setUserName} 
-          placeholder="Votre nom"
-        />
-      </View>
-      <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>PRÉNOM</Text>
         <TextInput 
           style={styles.inputField} 
           value={userFirstName} 
           onChangeText={setUserFirstName} 
           placeholder="Votre prénom"
+          placeholderTextColor="gray" // Change la couleur du texte de l'espace réservé (placeholder)
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>DATE DE NAISSANCE</Text>
+        <TextInput 
+          style={styles.inputField} 
+          value={birthDate} 
+          onChangeText={handleDateChange} 
+          placeholder="jj/mm/aaaa"
+          maxLength={10}
+          keyboardType="numeric" // Afficher un clavier numérique
+          placeholderTextColor="gray" // Change la couleur du texte de l'espace réservé (placeholder)
         />
       </View>
       <TouchableOpacity style={styles.saveButton} onPress={handleSaveProfile}>
@@ -95,7 +107,7 @@ const styles = StyleSheet.create({
   profilePhotoLabel: { fontSize: 14, fontWeight: 'bold', color: 'black', marginTop: 10 },
   inputContainer: { marginBottom: 15 },
   inputLabel: { fontSize: 14, fontWeight: 'bold', color: 'black', marginBottom: 5 },
-  inputField: { height: 50, borderWidth: 1, borderColor: '#E0E0E0', borderRadius: 10, paddingLeft: 10 },
+  inputField: { height: 50, borderWidth: 1, borderColor: '#E0E0E0', borderRadius: 10, paddingLeft: 10, color: 'black' }, // Change la couleur du texte dans le champ
   saveButton: { backgroundColor: 'black', padding: 15, borderRadius: 10, alignItems: 'center', marginTop: 20 },
   saveButtonText: { color: 'white', fontSize: 16, fontWeight: 'bold' },
 });

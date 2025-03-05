@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../src/firebaseConfig';
+
 import Login from './loginhome';  
 import LoginEmail from './loginemail';   
 import ForgotPassword from './ForgotPassword';  
@@ -11,6 +13,19 @@ import Match from './match';
 import CreateProfil from './CreateProfil';  
 
 const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
+
+const MatchTabNavigator = () => {
+  return (
+    <Tab.Navigator>
+      <Tab.Screen 
+        name="Match" 
+        component={Match} 
+        options={{ headerShown: false, tabBarLabel: "Match" }} 
+      />
+    </Tab.Navigator>
+  );
+};
 
 export default function App() {
   const [user, setUser] = useState<any>(null);
@@ -59,7 +74,7 @@ export default function App() {
         />
         <Stack.Screen 
           name="Match" 
-          component={Match} 
+          component={MatchTabNavigator}  
           options={{ headerShown: false }}  
         />
         <Stack.Screen 

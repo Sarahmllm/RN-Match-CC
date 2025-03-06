@@ -13,8 +13,6 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
   return (
     <ImageBackground source={{ uri: bgImage }} style={styles.background}>
       <View style={styles.overlay}>
-        <Text style={styles.loginTitle}>Se connecter</Text>
-
         <View style={styles.loginButtonContainer}>
           <TouchableOpacity style={styles.loginButton}>
             <AntDesign name="google" size={20} color="white" />

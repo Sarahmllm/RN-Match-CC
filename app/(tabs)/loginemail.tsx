@@ -55,8 +55,6 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
   return (
     <ImageBackground source={{ uri: bgImage }} style={styles.background}>
       <View style={styles.overlay}>
-        <Text style={styles.loginTitle}>Se connecter</Text>
-
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
         <View style={styles.inputContainer}>

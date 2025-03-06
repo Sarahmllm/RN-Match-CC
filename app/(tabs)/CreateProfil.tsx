@@ -74,7 +74,7 @@ const EditProfile = () => {
       style={styles.containerProfile}
     >
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-        <Text style={styles.pageTitle}>Edit Profile</Text>
+        <Text style={styles.pageTitle}>Créez votre profil</Text>
         {user && (
           <Text style={styles.emailText}>Email: {user.email}</Text>
         )}

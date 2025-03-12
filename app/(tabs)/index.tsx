@@ -11,6 +11,7 @@ import ForgotPassword from './ForgotPassword';
 import SignUp from './SignUp';  
 import Match from './matchSwipe';  
 import CreateProfil from './CreateProfil';  
+import ProfileScreen from './ProfileScreen';  
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -23,6 +24,11 @@ const MatchTabNavigator = () => {
         component={Match} 
         options={{ headerShown: false, tabBarLabel: "Match" }} 
       />
+      <Tab.Screen 
+        name="Profile" 
+        component={ProfileScreen}  
+        options={{ headerShown: false, tabBarLabel: "Profil" }} 
+      />
     </Tab.Navigator>
   );
 };
@@ -32,14 +38,10 @@ export default function App() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser); 
-      } else {
-        setUser(null); 
-      }
+      setUser(currentUser ? currentUser : null);
     });
 
-    return () => unsubscribe(); 
+    return () => unsubscribe();
   }, []);
 
   return (
@@ -48,10 +50,7 @@ export default function App() {
         <Stack.Screen 
           name="Login" 
           component={Login} 
-          options={{ 
-            title: "Retour",
-            headerShown: false,
-          }}   
+          options={{ headerShown: false }}   
         />
         <Stack.Screen 
           name="LoginEmail" 

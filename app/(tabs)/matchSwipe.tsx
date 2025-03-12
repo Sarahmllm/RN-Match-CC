@@ -1,46 +1,88 @@
-import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../src/firebaseConfig';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
+
+interface Profile {
+  prenom: string;
+  birthDate: string;
+  profileImage: string;
+  age: number;
+  photoURL: string;
+}
+
+const calculateAge = (birthDate: string): number => {
+  const birth = new Date(birthDate.split('/').reverse().join('-'));
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDiff = today.getMonth() - birth.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+  return age;
+};
 
 const MatchScreen = () => {
-  const [matchAccepted, setMatchAccepted] = useState<boolean | null>(null);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const handleAccept = () => {
-    setMatchAccepted(true);
-    console.log('Match accepté');
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'users'));
+        const profilesData: Profile[] = querySnapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            ...data,
+            age: calculateAge(data.birthDate),
+            photoURL: data.profileImage.replace('file://', ''),
+          } as Profile;
+        });
+        setProfiles(profilesData);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des profils:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfiles();
+  }, []);
+
+  const handleNextProfile = () => {
+    if (currentIndex < profiles.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    } else {
+      setCurrentIndex(0);
+    }
   };
 
-  const handleReject = () => {
-    setMatchAccepted(false);
-    console.log('Match rejeté');
-  };
+  if (loading) {
+    return <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />;
+  }
+
+  const currentProfile = profiles[currentIndex];
 
   return (
     <View style={styles.container}>
-      {/* En attendant */}
-      <Image
-        source={{ uri: '' }} 
-        style={styles.profileImage}
-      />
-      
-      {/* Les boutons */}
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={[styles.button, styles.rejectButton]} onPress={handleReject}>
-          <Ionicons name="close-circle" size={60} color="white" />
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={[styles.button, styles.acceptButton]} onPress={handleAccept}>
-          <Ionicons name="checkmark-circle" size={60} color="white" />
-        </TouchableOpacity>
-      </View>
-      
-      {/* Afficher le résultat */}
-      {matchAccepted !== null && (
-        <Text style={styles.resultText}>
-          Match {matchAccepted ? 'accepté' : 'rejeté'}
-        </Text>
+      {currentProfile ? (
+        <>
+          <Image source={{ uri: currentProfile.photoURL }} style={styles.profileImage} />
+          <Text style={styles.profileText}>{currentProfile.prenom}, {currentProfile.age}</Text>
+          <View style={styles.buttonsContainer}>
+            <TouchableOpacity style={[styles.button, styles.rejectButton]} onPress={handleNextProfile}>
+              <Ionicons name="close-circle" size={60} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.button, styles.acceptButton]} onPress={handleNextProfile}>
+              <Ionicons name="checkmark-circle" size={60} color="white" />
+            </TouchableOpacity>
+          </View>
+        </>
+      ) : (
+        <Text style={styles.noProfileText}>Aucun profil disponible</Text>
       )}
     </View>
   );
@@ -55,9 +97,14 @@ const styles = StyleSheet.create({
   },
   profileImage: {
     width: width,
-    height: 300,
+    height: height * 0.6, // Augmentation de la hauteur
     resizeMode: 'cover',
     borderRadius: 10,
+  },
+  profileText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginVertical: 10,
   },
   buttonsContainer: {
     flexDirection: 'row',
@@ -81,12 +128,14 @@ const styles = StyleSheet.create({
   acceptButton: {
     backgroundColor: 'green',
   },
-  resultText: {
-    position: 'absolute',
-    bottom: 20,
-    fontSize: 22,
+  noProfileText: {
+    fontSize: 18,
     fontWeight: 'bold',
-    color: 'black',
+  },
+  loader: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

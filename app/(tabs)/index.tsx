@@ -12,10 +12,10 @@ import SignUp from './SignUp';
 import Match from './matchSwipe';  
 import CreateProfil from './CreateProfil';  
 import ProfileScreen from './ProfileScreen';  
+import ChatList from './chatList';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-
 const MatchTabNavigator = () => {
   return (
     <Tab.Navigator>
@@ -28,6 +28,11 @@ const MatchTabNavigator = () => {
         name="Profile" 
         component={ProfileScreen}  
         options={{ headerShown: false, tabBarLabel: "Profil" }} 
+      />
+      <Tab.Screen 
+        name="ChatList" 
+        component={ChatList}  
+        options={{ headerShown: false, tabBarLabel: "ChatList" }} 
       />
     </Tab.Navigator>
   );

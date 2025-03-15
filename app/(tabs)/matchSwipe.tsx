@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   },
   profileImage: {
     width: width,
-    height: height * 0.6, // Augmentation de la hauteur
+    height: height * 0.7, 
     resizeMode: 'cover',
     borderRadius: 10,
   },

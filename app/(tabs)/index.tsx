@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../src/firebaseConfig';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import Login from './loginHome';  
 import LoginEmail from './loginEmail';   
@@ -16,23 +17,42 @@ import ChatList from './chatList';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
 const MatchTabNavigator = () => {
   return (
     <Tab.Navigator>
       <Tab.Screen 
         name="Match" 
         component={Match} 
-        options={{ headerShown: false, tabBarLabel: "Match" }} 
-      />
-      <Tab.Screen 
-        name="Profile" 
-        component={ProfileScreen}  
-        options={{ headerShown: false, tabBarLabel: "Profil" }} 
+        options={{
+          headerShown: false, 
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="group" size={size} color={color} />
+          ),
+          tabBarLabel: () => null,
+        }} 
       />
       <Tab.Screen 
         name="ChatList" 
         component={ChatList}  
-        options={{ headerShown: false, tabBarLabel: "ChatList" }} 
+        options={{
+          headerShown: false, 
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="chat" size={size} color={color} />
+          ),
+          tabBarLabel: () => null,
+        }} 
+      />
+      <Tab.Screen 
+        name="Profile" 
+        component={ProfileScreen}  
+        options={{
+          headerShown: false, 
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="account-circle" size={size} color={color} />
+          ),
+          tabBarLabel: () => null,
+        }} 
       />
     </Tab.Navigator>
   );

@@ -70,8 +70,12 @@ const MatchScreen = () => {
     <View style={styles.container}>
       {currentProfile ? (
         <>
-          <Image source={{ uri: currentProfile.photoURL }} style={styles.profileImage} />
-          <Text style={styles.profileText}>{currentProfile.prenom}, {currentProfile.age}</Text>
+          <View style={styles.imageContainer}>
+            <Image source={{ uri: currentProfile.photoURL }} style={styles.profileImage} />
+            <View style={styles.overlay}>
+              <Text style={styles.profileText}>{currentProfile.prenom}, {currentProfile.age}</Text>
+            </View>
+          </View>
           <View style={styles.buttonsContainer}>
             <TouchableOpacity style={[styles.button, styles.rejectButton]} onPress={handleNextProfile}>
               <Ionicons name="close-circle" size={60} color="white" />
@@ -95,16 +99,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#f0f0f0',
   },
+  imageContainer: {
+    position: 'relative',
+  },
   profileImage: {
     width: width,
-    height: height * 0.7, 
+    height: height * 0.7,
     resizeMode: 'cover',
+    borderRadius: 10,
+  },
+  overlay: {
+    position: 'absolute',
+    bottom: 80,
+    left: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 10,
     borderRadius: 10,
   },
   profileText: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginVertical: 10,
+    color: 'white',
   },
   buttonsContainer: {
     flexDirection: 'row',
@@ -120,7 +135,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 35,
-    elevation: 5, 
+    elevation: 5,
   },
   rejectButton: {
     backgroundColor: 'red',

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { collection, getDocs } from 'firebase/firestore';
+import { useNavigation } from '@react-navigation/native';
+import SubscriptionTest from './subscriptionPlan';
 import { db } from '../../src/firebaseConfig';
 
 const { width, height } = Dimensions.get('window');
@@ -29,6 +31,7 @@ const MatchScreen = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchProfiles = async () => {
@@ -68,6 +71,10 @@ const MatchScreen = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.navbar}>
+        <Text style={styles.navTitle}>Match</Text>
+        <Ionicons name="star" size={30} color="gold" style={styles.starIcon} />
+        </View>
       {currentProfile ? (
         <>
           <View style={styles.imageContainer}>
@@ -99,8 +106,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#f0f0f0',
   },
+  navbar: {
+    width:'100%',
+    height: 60,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    backgroundColor: '#fff',
+    elevation: 4,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+  },
+  navTitle:{
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  starIcon: {
+    marginRight: 10,
+  },
   imageContainer: {
     position: 'relative',
+    marginTop: 50,
   },
   profileImage: {
     width: width,

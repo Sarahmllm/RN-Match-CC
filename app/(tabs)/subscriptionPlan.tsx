@@ -1,9 +1,14 @@
 import React from "react";
-import { View } from "react-native";
+import { View, Text } from "react-native";
 import MatchScreen from "./matchSwipe";
 
-const SubscriptionTest = () => {
-  return <View />;
+const SubscriptionPlan = () => {
+  return (
+    <View>
+      <Text>Bonjour</Text>
+    </View>
+  );
 };
 
-export default SubscriptionTest;
+
+export default SubscriptionPlan;

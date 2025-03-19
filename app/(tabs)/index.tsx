@@ -6,7 +6,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../src/firebaseConfig';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-import Login from './loginhome';  
+import Login from './loginHome';  
 import LoginEmail from './loginemail';   
 import ForgotPassword from './ForgotPassword';  
 import SignUp from './SignUp';  
@@ -14,7 +14,7 @@ import Match from './matchSwipe';
 import CreateProfil from './CreateProfil';  
 import ProfileScreen from './ProfileScreen';  
 import ChatList from './chatList';
-import SubscriptionTest from './subscriptionPlan';
+import SubscriptionPlan from './subscriptionPlan';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -113,10 +113,10 @@ export default function App() {
             headerBackTitleStyle: { marginRight: 25, fontSize: 16 }, 
           }}  
         />
-        <Stack.Screen
-        name="SubscriptionTest"
-        component={SubscriptionTest}
-        options={{ title:"Subscription"}}
+          <Stack.Screen
+            name="SubscriptionPlan"
+            component={SubscriptionPlan}
+            options={{ title: "Subscription" }}
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -3,8 +3,8 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, ActivityIn
 import { Ionicons } from '@expo/vector-icons';
 import { collection, getDocs } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
-import SubscriptionTest from './subscriptionPlan';
 import { db } from '../../src/firebaseConfig';
+import MatchTopBar from './MatchTopBar';
 
 const { width, height } = Dimensions.get('window');
 
@@ -71,29 +71,31 @@ const MatchScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.navbar}>
-        <Text style={styles.navTitle}>Match</Text>
-        <Ionicons name="star" size={30} color="gold" style={styles.starIcon} />
-        </View>
-      {currentProfile ? (
-        <>
-          <View style={styles.imageContainer}>
+      {/* Intégration de MatchTopBar */}
+      <MatchTopBar />
+
+      <View style={styles.imageContainer}>
+        {currentProfile ? (
+          <>
             <Image source={{ uri: currentProfile.photoURL }} style={styles.profileImage} />
             <View style={styles.overlay}>
               <Text style={styles.profileText}>{currentProfile.prenom}, {currentProfile.age}</Text>
             </View>
-          </View>
-          <View style={styles.buttonsContainer}>
-            <TouchableOpacity style={[styles.button, styles.rejectButton]} onPress={handleNextProfile}>
-              <Ionicons name="close-circle" size={60} color="white" />
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, styles.acceptButton]} onPress={handleNextProfile}>
-              <Ionicons name="checkmark-circle" size={60} color="white" />
-            </TouchableOpacity>
-          </View>
-        </>
-      ) : (
-        <Text style={styles.noProfileText}>Aucun profil disponible</Text>
+          </>
+        ) : (
+          <Text style={styles.noProfileText}>Aucun profil disponible</Text>
+        )}
+      </View>
+
+      {currentProfile && (
+        <View style={styles.buttonsContainer}>
+          <TouchableOpacity style={[styles.button, styles.rejectButton]} onPress={handleNextProfile}>
+            <Ionicons name="close-circle" size={60} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.button, styles.acceptButton]} onPress={handleNextProfile}>
+            <Ionicons name="checkmark-circle" size={60} color="white" />
+          </TouchableOpacity>
+        </View>
       )}
     </View>
   );
@@ -105,27 +107,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f0f0f0',
-  },
-  navbar: {
-    width:'100%',
-    height: 60,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    backgroundColor: '#fff',
-    elevation: 4,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-  },
-  navTitle:{
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  starIcon: {
-    marginRight: 10,
   },
   imageContainer: {
     position: 'relative',

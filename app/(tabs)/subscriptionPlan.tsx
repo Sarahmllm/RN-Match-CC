@@ -7,56 +7,54 @@ const SubscriptionPlan = () => {
   const [selectedPayment, setSelectedPayment] = useState("apple");
 
   const plans = {
-    mois: " 9,99€/mois",
-    année: " 99,99€/an"
+    mois: "    9,99€/mois",
+    année: "    99,99€/an"
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Choisissez votre abonnement</Text>
       
-      {/* Plan Selection */}
       <View style={styles.planSelection}>
         <Text style={styles.subtitle}>Mois ou année?</Text>
 
         <View style={styles.planOptions}>
           <TouchableOpacity
-            style={styles.planOption}
+            style={[styles.planOption, selectedPlan === "mois" && styles.selected]}
             onPress={() => setSelectedPlan("mois")}
           >
             <Text style={styles.optionText}>Mois</Text>
-            <Text style={styles.priceText}>{plans.mois}</Text>
+            <Text style={[styles.priceText, styles.pricePosition]}>{plans.mois}</Text>
             <Ionicons name={selectedPlan === "mois" ? "checkbox" : "square-outline"} size={24} color="black" style={styles.checkbox} />
           </TouchableOpacity>
           
           <TouchableOpacity
-            style={styles.planOption}
+            style={[styles.planOption, selectedPlan === "année" && styles.selected]}
             onPress={() => setSelectedPlan("année")}
           >
             <Text style={styles.optionText}>Année</Text>
-            <Text style={styles.priceText}>{plans.année}</Text>
+            <Text style={[styles.priceText, styles.pricePosition]}>{plans.année}</Text>
             <Ionicons name={selectedPlan === "année" ? "checkbox" : "square-outline"} size={24} color="black" style={styles.checkbox} />
           </TouchableOpacity>
         </View>
       </View>
       
-      {/* Payment Selection */}
       <Text style={styles.subtitle}>Méthode de paiement</Text>
       <View style={styles.paymentSelection}>
-        <TouchableOpacity
-          style={styles.paymentOption}
-          onPress={() => setSelectedPayment("apple")}
-        >
-          <Text style={styles.optionText}>Apple</Text>
-          <Ionicons name={selectedPayment === "apple" ? "checkbox" : "square-outline"} size={24} color="black" style={styles.checkbox} />
-        </TouchableOpacity>
-        
         <TouchableOpacity
           style={styles.paymentOption}
           onPress={() => setSelectedPayment("carte")}
         >
           <Text style={styles.optionText}>Carte Bancaire</Text>
           <Ionicons name={selectedPayment === "carte" ? "checkbox" : "square-outline"} size={24} color="black" style={styles.checkbox} />
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={styles.paymentOption}
+          onPress={() => setSelectedPayment("apple")}
+        >
+          <Text style={styles.optionText}>Apple</Text>
+          <Ionicons name={selectedPayment === "apple" ? "checkbox" : "square-outline"} size={24} color="black" style={styles.checkbox} />
         </TouchableOpacity>
       </View>
       
@@ -90,7 +88,7 @@ const styles = StyleSheet.create({
   planSelection: { 
     flexDirection: "column", 
     alignItems: "flex-start", 
-    marginBottom: 20 
+    marginBottom: 20
   },
   planOptions: {
     flexDirection: "column",
@@ -101,12 +99,17 @@ const styles = StyleSheet.create({
     flexDirection: "row", 
     justifyContent: "space-between", 
     width: "100%", 
-    padding: 15, 
+    paddingVertical: 25, 
+    paddingHorizontal: 15, 
     borderWidth: 1, 
     borderColor: "#ddd", 
     marginVertical: 5, 
     alignItems: "center", 
-    borderRadius: 10 
+    borderRadius: 10,
+    position: "relative", 
+  },
+  selected: {
+    backgroundColor: "#f0f0f0", 
   },
   optionText: { 
     fontSize: 16, 
@@ -115,7 +118,11 @@ const styles = StyleSheet.create({
   },
   priceText: { 
     fontSize: 14, 
-    color: "#555" 
+    color: "#555", 
+  },
+  pricePosition: {
+    position: "absolute", 
+    bottom: 10, 
   },
   checkbox: { 
     marginLeft: "auto" 

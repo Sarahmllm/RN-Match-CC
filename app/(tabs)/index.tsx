@@ -116,7 +116,8 @@ export default function App() {
           <Stack.Screen
             name="SubscriptionPlan"
             component={SubscriptionPlan}
-            options={{ title: "Subscription" }}
+            options={{ title: "" }}
+            
         />
       </Stack.Navigator>
     </NavigationContainer>

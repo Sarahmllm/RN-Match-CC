@@ -27,14 +27,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     height: 60,
-    backgroundColor: "#fff",
+    backgroundColor: "#181818",
     borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
+    borderBottomColor: "#181818",
     width: "100%",
   },
   navTitle: {
     fontSize: 20,
     fontWeight: "bold",
+    color:'#fff',
     flex: 1,  
   },
 });

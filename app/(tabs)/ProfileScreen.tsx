@@ -86,20 +86,20 @@ const ProfilePage = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', padding: 20 },
-  title: { fontSize: 32, fontWeight: 'bold', marginBottom: 20 },
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#101010', padding: 20 },
+  title: { fontSize: 32, fontWeight: 'bold', marginBottom: 20, color:'white' },
   profileSection: { alignItems: 'center', marginBottom: 20 },
   profileImageContainer: { justifyContent: 'center', alignItems: 'center' },
   profileImage: { width: 150, height: 150, borderRadius: 125 },
-  profilePlaceholder: { width: 150, height: 150, borderRadius: 125, backgroundColor: '#E0E0E0', justifyContent: 'center', alignItems: 'center' },
-  placeholderText: { color: 'gray', fontSize: 16 },
-  profilePhotoLabel: { fontSize: 14, color: 'black', marginTop: 10 },
+  profilePlaceholder: { width: 150, height: 150, borderRadius: 125, backgroundColor: '#303030', justifyContent: 'center', alignItems: 'center' },
+  placeholderText: { color: 'white', fontSize: 16 },
+  profilePhotoLabel: { fontSize: 14, color: 'white', marginTop: 10 },
 
   infoSection: { alignSelf: 'stretch', marginBottom: 30 },
-  infoLabel: { fontSize: 16, fontWeight: 'bold', color: 'black' },
-  infoText: { fontSize: 16, color: 'black', marginBottom: 10 },
+  infoLabel: { fontSize: 16, fontWeight: 'bold', color: 'white' },
+  infoText: { fontSize: 16, color: 'white', marginBottom: 10 },
 
-  editButton: { backgroundColor: 'black', padding: 15, borderRadius: 10, alignItems: 'center' },
+  editButton: { backgroundColor: '#181818', padding: 15, borderRadius: 10, alignItems: 'center' },
   editButtonText: { color: 'white', fontSize: 16, fontWeight: 'bold' },
 });
 

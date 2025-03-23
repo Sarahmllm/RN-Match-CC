@@ -26,7 +26,13 @@ const MatchTabNavigator = () => {
         name="Match" 
         component={Match} 
         options={{
-          headerShown: false, 
+          headerShown: false,
+          tabBarStyle:
+           {backgroundColor: '#181818',
+            borderTopWidth: 0,
+           },
+          tabBarActiveTintColor: 'white',
+          tabBarInactiveTintColor: 'gray',
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="group" size={size} color={color} />
           ),
@@ -37,7 +43,13 @@ const MatchTabNavigator = () => {
         name="ChatList" 
         component={ChatList}  
         options={{
-          headerShown: false, 
+          headerShown: false,
+        tabBarStyle:
+          {backgroundColor: '#181818',
+           borderTopWidth: 0,
+          },
+        tabBarActiveTintColor: 'white',
+        tabBarInactiveTintColor: 'gray',
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="chat" size={size} color={color} />
           ),
@@ -48,7 +60,13 @@ const MatchTabNavigator = () => {
         name="Profile" 
         component={ProfileScreen}  
         options={{
-          headerShown: false, 
+          headerShown: false,
+        tabBarStyle:
+          {backgroundColor: '#181818',
+           borderTopWidth: 0,
+          },
+        tabBarActiveTintColor: 'white',
+        tabBarInactiveTintColor: 'gray',
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="account-circle" size={size} color={color} />
           ),

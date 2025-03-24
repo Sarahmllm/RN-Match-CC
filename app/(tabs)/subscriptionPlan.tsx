@@ -123,53 +123,17 @@ const styles = StyleSheet.create({
   subtitle: { fontSize: 18, marginBottom: 10, textAlign: "left", color: "#fff" },
   planSelection: { flexDirection: "column", alignItems: "flex-start", marginBottom: 20 },
   planOptions: { flexDirection: "column", alignItems: "stretch", marginTop: 10 },
-  planOption: { 
-    flexDirection: "row", 
-    justifyContent: "space-between", 
-    width: "100%", 
-    padding: 15, 
-    borderWidth: 1, 
-    borderColor: "#ff6f61", 
-    marginVertical: 5, 
-    alignItems: "center", 
-    borderRadius: 10 
-  },
+  planOption: { flexDirection: "row", justifyContent: "space-between", width: "100%", padding: 15, borderWidth: 1, borderColor: "#ff6f61", marginVertical: 5, alignItems: "center", borderRadius: 10 },
   optionText: { fontSize: 16, fontWeight: "bold", color: "#fff" },
   priceText: { fontSize: 14, color: "#fff" },
   checkbox: { marginLeft: "auto" },
   paymentSelection: { flexDirection: "column", alignItems: "stretch", marginBottom: 20 },
-  paymentOption: { 
-    flexDirection: "row", 
-    alignItems: "center", 
-    padding: 15, 
-    backgroundColor: "#2a2625",
-    borderWidth: 1, 
-    borderRadius: 10, 
-    minWidth: "100%", 
-    marginVertical: 5 
-  },
+  paymentOption: { flexDirection: "row", alignItems: "center", padding: 15, backgroundColor: "#2a2625", borderWidth: 1, borderRadius: 10, minWidth: "100%", marginVertical: 5 },
   cardForm: { marginTop: 10 },
-  input: { 
-    borderWidth: 1, 
-    borderColor: "#ccc", 
-    padding: 10, 
-    borderRadius: 10, 
-    marginBottom: 10, 
-    width: "100%", 
-    color: "#fff", 
-  },
-  inputPlaceholder: {
-    color: "#fff", 
-  },
+  input: { borderWidth: 1, borderColor: "#ccc", padding: 10, borderRadius: 10, marginBottom: 10, width: "100%", color: "#fff" },
+  inputPlaceholder: { color: "#fff" },
   payButtonContainer: { flex: 1, justifyContent: "flex-end" },
-  payButton: { 
-    backgroundColor: "#ff6f61", 
-    padding: 15, 
-    borderRadius: 25, 
-    alignItems: "center", 
-    alignSelf: "center", 
-    width: "100%" 
-  },
+  payButton: { backgroundColor: "#ff6f61", padding: 15, borderRadius: 25, alignItems: "center", alignSelf: "center", width: "100%" },
   payButtonText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
   paymentIcon: { marginRight: 10 }
 });

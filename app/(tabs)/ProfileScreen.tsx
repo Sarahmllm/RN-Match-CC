@@ -148,15 +148,16 @@ const styles = StyleSheet.create({
   infoText: { fontSize: width * 0.045, color: 'white' },
   editButton: { backgroundColor: '#181818', padding: 15, borderRadius: 10, alignItems: 'center' },
   editButtonText: { color: 'white', fontSize: width * 0.045, fontWeight: 'bold' },
-  actionButton: { flexDirection: 'row', alignItems: 'center', marginTop: 20 },
+  actionButton: { flexDirection: 'row', alignItems: 'center', marginTop: 20, padding: 15 },
   actionIcon: { marginRight: 10 },
   actionText: { fontSize: width * 0.045, color: 'white', fontWeight: 'bold' },
-  logoutButton: { flexDirection: 'row', alignItems: 'center', marginTop: 20 },
+  logoutButton: { flexDirection: 'row', alignItems: 'center', marginTop: 20, padding: 15 },
   logoutIcon: { marginRight: 10 },
   logoutText: { fontSize: width * 0.045, color: '#7F8C8D', fontWeight: 'bold' },
-  deleteAccountButton: { flexDirection: 'row', alignItems: 'center', marginTop: 20 },
+  deleteAccountButton: { flexDirection: 'row', alignItems: 'center', marginTop: 20, padding: 15 },
   deleteIcon: { marginRight: 10 },
   deleteText: { fontSize: width * 0.045, color: '#95A5A6', fontWeight: 'bold' },
 });
+
 
 export default ProfilePage;

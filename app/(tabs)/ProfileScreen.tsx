@@ -5,6 +5,7 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore, doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { auth, db } from '../../src/firebaseConfig';
+import { useNavigation } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -14,6 +15,8 @@ const ProfilePage = () => {
   const [userEmail, setUserEmail] = useState<string>('');
   const [isProfileLoaded, setIsProfileLoaded] = useState(false);
   const user = auth.currentUser;
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     const loadUserProfile = async () => {
@@ -71,10 +74,16 @@ const ProfilePage = () => {
       await deleteDoc(userRef);
       await user?.delete();
       await handleLogout();
+
       Alert.alert('Compte supprimé', 'Votre compte a été supprimé avec succès', [
         {
           text: 'OK',
-          onPress: () => {},
+          onPress: () => {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Login' }],
+            });
+          },
         },
       ]);
     } catch (error) {
@@ -158,6 +167,5 @@ const styles = StyleSheet.create({
   deleteIcon: { marginRight: 10 },
   deleteText: { fontSize: width * 0.045, color: '#95A5A6', fontWeight: 'bold' },
 });
-
 
 export default ProfilePage;

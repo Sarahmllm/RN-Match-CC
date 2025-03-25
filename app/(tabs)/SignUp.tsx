@@ -34,7 +34,7 @@ export default function SignupScreen({ navigation }: { navigation: any }) {
 
       if (currentUser) {
         await updateProfile(currentUser, { displayName: name });
-        navigation.navigate('LoginEmail');
+        navigation.navigate('CreateProfil'); 
       }
     } catch (error: any) {
       setError(error.message);

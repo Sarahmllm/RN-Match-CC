@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; 
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
 import { AntDesign } from '@expo/vector-icons';
@@ -10,6 +10,7 @@ const EditProfile = () => {
   const [userFirstName, setUserFirstName] = useState('');
   const [birthDate, setBirthDate] = useState('');
   const [userProfileImage, setUserProfileImage] = useState<string | null>(null);
+  const [gender, setGender] = useState('');
   const [isProfileLoaded, setIsProfileLoaded] = useState(false);
   const navigation = useNavigation<any>();
   const auth = getAuth();
@@ -42,7 +43,7 @@ const EditProfile = () => {
   };
 
   const handleSaveProfile = async () => {
-    if (!userFirstName || !birthDate || !userProfileImage) {
+    if (!userFirstName || !birthDate || !userProfileImage || !gender) {
       Alert.alert('Erreur', 'Tous les champs sont obligatoires');
       return;
     }
@@ -53,6 +54,7 @@ const EditProfile = () => {
         birthDate: birthDate,
         profileImage: userProfileImage,
         email: user.email,
+        gender: gender,
       });
       navigation.navigate('Match');
     }
@@ -66,7 +68,11 @@ const EditProfile = () => {
     setBirthDate(formattedText);
   };
 
-  if (!isProfileLoaded) return null; // Wait for profile check to complete
+  const handleGenderSelection = (selectedGender: string) => {
+    setGender(selectedGender);
+  };
+
+  if (!isProfileLoaded) return null;
 
   return (
     <KeyboardAvoidingView
@@ -113,6 +119,25 @@ const EditProfile = () => {
             placeholderTextColor="gray"
           />
         </View>
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.inputLabel}>SEXE</Text>
+          <View style={styles.genderButtonsContainer}>
+            <TouchableOpacity
+              style={[styles.genderButton, gender === 'Homme' && styles.selectedButton]}
+              onPress={() => handleGenderSelection('Homme')}
+            >
+              <Text style={[styles.genderButtonText, gender === 'Homme' && styles.selectedText]}>Homme</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.genderButton, gender === 'Femme' && styles.selectedButton]}
+              onPress={() => handleGenderSelection('Femme')}
+            >
+              <Text style={[styles.genderButtonText, gender === 'Femme' && styles.selectedText]}>Femme</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
         <TouchableOpacity style={styles.saveButton} onPress={handleSaveProfile}>
           <Text style={styles.saveButtonText}>Sauvegarder</Text>
         </TouchableOpacity>
@@ -136,6 +161,11 @@ const styles = StyleSheet.create({
   inputField: { height: 50, borderWidth: 1, borderColor: '#E0E0E0', borderRadius: 10, paddingLeft: 10, color: 'black' },
   saveButton: { backgroundColor: 'black', padding: 15, borderRadius: 10, alignItems: 'center', marginTop: 20 },
   saveButtonText: { color: 'white', fontSize: 16, fontWeight: 'bold' },
+  genderButtonsContainer: { flexDirection: 'row', justifyContent: 'space-around' },
+  genderButton: { flex: 1, padding: 10, backgroundColor: '#F0F0F0', borderRadius: 5, alignItems: 'center', margin: 5 },
+  selectedButton: { backgroundColor: '#4CAF50' },
+  genderButtonText: { color: '#000', fontSize: 16 },
+  selectedText: { color: '#FFF' },
 });
 
 export default EditProfile;

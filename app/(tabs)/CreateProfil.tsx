@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react'; 
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
 import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
+import uuid from 'react-native-uuid';
 
 const EditProfile = () => {
   const [userFirstName, setUserFirstName] = useState('');
@@ -43,20 +44,35 @@ const EditProfile = () => {
   };
 
   const handleSaveProfile = async () => {
-    if (!userFirstName || !birthDate || !userProfileImage || !gender) {
-      Alert.alert('Erreur', 'Tous les champs sont obligatoires');
-      return;
-    }
-    if (user) {
-      const userRef = doc(db, 'users', user.email!);
+    try {
+      if (!userFirstName || !birthDate || !userProfileImage || !gender) {
+        Alert.alert('Erreur', 'Tous les champs sont obligatoires');
+        return;
+      }
+
+      if (!user) {
+        Alert.alert('Erreur', 'Vous devez être connecté pour sauvegarder votre profil');
+        return;
+      }
+
+      const uniqueId = uuid.v4();
+      console.log('Enregistrement des données avec UID:', uniqueId);
+
+      const userRef = doc(db, 'users', uniqueId);
       await setDoc(userRef, {
         prenom: userFirstName,
         birthDate: birthDate,
         profileImage: userProfileImage,
         email: user.email,
         gender: gender,
+        uid: uniqueId,
       });
+
+      console.log('Profil sauvegardé avec succès');
       navigation.navigate('Match');
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde du profil :', error);
+      Alert.alert('Erreur', 'Il y a eu un problème lors de la sauvegarde du profil. Veuillez réessayer.');
     }
   };
 

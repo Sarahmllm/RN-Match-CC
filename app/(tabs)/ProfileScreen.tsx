@@ -59,14 +59,19 @@ const ProfilePage = () => {
   const handleInviteFriends = () => {
     Alert.alert('Inviter des amis', 'Fonction d\'invitation à implémenter');
   };
-
+  
   const handleLogout = async () => {
     try {
       await auth.signOut();
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
     } catch (error) {
       Alert.alert('Erreur', 'Erreur lors de la déconnexion');
     }
   };
+  
 
   const handleDeleteAccount = async () => {
     try {

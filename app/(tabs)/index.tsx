@@ -131,11 +131,17 @@ export default function App() {
             headerBackTitleStyle: { marginRight: 25, fontSize: 16 }, 
           }}  
         />
-          <Stack.Screen
-            name="SubscriptionPlan"
-            component={SubscriptionPlan}
-            options={{ title: "" }}
-            
+        <Stack.Screen
+          name="SubscriptionPlan"
+          component={SubscriptionPlan}
+          options={{
+            title: "", 
+            headerStyle: {
+              backgroundColor: "#181818", 
+              elevation: 0, 
+            },
+            headerTintColor: "#fff", 
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>
